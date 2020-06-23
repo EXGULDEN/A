@@ -9,7 +9,7 @@ class DeepQLearning(object):
     def __init__(self):
         self.targetNN=NeuralNetwork()
         self.mainNN=NeuralNetwork()
-        self.exp=ExperienceReplay(1000)
+        self.exp=ExperienceReplay(10000)
         self.batch_size=32
         self.Epsilon=0.9
         self.Lambda=0.9
@@ -26,9 +26,9 @@ class DeepQLearning(object):
         self.targetNN.Savemodel(name)
 
 
-    def getNext(self,situation,numlist):
-        ran=(random.uniform(0,1)<self.Epsilon)
-        if ran:
+    def getNext(self,situation,numlist,israndom):
+        ran=(random.uniform(0,1)>self.Epsilon)
+        if ran or israndom:
             rannum=random.sample(numlist,1)
             max_index=rannum[0]
         else:
@@ -81,10 +81,9 @@ class DeepQLearning(object):
         self.exp.add(fistS,action,reward,done,nextS)
         
     def learn(self):
-        size=self.exp.getSize()
-        if(size<self.batch_size):
+        if self.exp.tree.flag:
             return
-        fistS,actrew,nextS=self.exp.getDate(self.batch_size)
+        fistS,actrew,nextS,idxl,isweight=self.exp.getDate(self.batch_size)
         qtarget=[]
         for i in nextS:
             targetv=self.targetNN.model.predict(i)
@@ -94,12 +93,15 @@ class DeepQLearning(object):
                 qtarget.append(v)
         k=0
         ans=[]
+        errors=empty(self.batch_size)
         for i,j,done in actrew:
             r=zeros(388)
             r[i]+=j+(1-done)*self.Lambda*qtarget[k]
             ans.append(r)
+            errors[k]=abs(mainv[0][i]-r[i])
             k+=1
-        self.mainNN.Training(fistS,ans)
+        self.mainNN.Training(fistS,ans,isweight)
+        self.exp.batch_updata(idxl,errors)
 
     def copy(self):
         self.targetNN.copy(self.mainNN.model.get_weights())

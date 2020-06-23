@@ -17,10 +17,10 @@ class NeuralNetwork(object):
         self.model.add(Dense(output_dim=388))
         self.model.compile(loss='mean_squared_error',optimizer='sgd')
 
-    def Training(self,xtrain,ytrain):
+    def Training(self,xtrain,ytrain,isweight):
         x_train=np.reshape(xtrain,(32,-1))
         y_train=np.reshape(ytrain,(32,-1))
-        self.model.fit(x_train,y_train,epochs=1,batch_size=32)
+        self.model.fit(x_train,y_train,batch_size=32,sample_weight=isweight)
 
     def copy(self,weights):
         self.model.set_weights(weights)

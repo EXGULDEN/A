@@ -5,6 +5,7 @@ from MCTS import MCTS
 from DeepQLearning import DeepQLearning
 #from MCTSK import MCTSK
 import math
+import time
 
 
 WIDTH=50
@@ -18,7 +19,8 @@ tree=0
 fistS=0
 nextS=0
 board=0
-
+step=0
+israndom=False
 def draw_background(surf,background,N):
     surf.blit(background,(0,0))
     
@@ -58,6 +60,7 @@ def print_winner(surf):
         text_surface = my_font.render("winner is black!", True, (0,0,0))
     elif situation.flag==-1:
         text_surface = my_font.render("winner is white!", True, (0,0,0))
+    time.sleep(1) 
     surf.blit(text_surface,(0,N*50+10))
 
 def new_situation(N):
@@ -116,17 +119,18 @@ while running:
     
     if stage1==1:
         print(stage)
-        
         if stage==1:
             board=situation.GetBoard()
             numlist=situation.GetNum(-1)
-            z,xx,yy,num=dqn.getNext(board,numlist)
+            z,xx,yy,num=dqn.getNext(board,numlist,israndom)
             print("z",z)
             x,y=situation.GetXY(z)
-            print(x,y,x+xx,y+yy)
+            print(x,y,x+xx,y+yy,israndom)
             Sans=situation.Select(x,y)
+            israndom=True
             if Sans:
                 stage=2
+                israndom=False
         if stage==2:
             t=False
             for i in Sans:
@@ -138,24 +142,27 @@ while running:
                 Sans=situation.Select(x+xx,y+yy)
                 situation.SetBa(x+xx,y+yy)
                 nextS=situation.board.copy()
-                dqn.saveEXP(fistS,num,0,0,nextS)
+                dqn.saveEXP(fistS,num,-1,0,nextS)
                 xxx=x+xx
                 yyy=y+yy
                 stage=3
+                israndom=False
             else:
                 fistS=situation.board.copy()
                 nextS=situation.board.copy()
                 dqn.saveEXP(fistS,num,-100,1,nextS)
                 stage=1
+                israndom=True
         if stage==3:
             board=situation.GetBoard()
             numlist=situation.GetNum(1)
-            z,xx,yy,num=dqn.getNext(board,numlist)
+            z,xx,yy,num=dqn.getNext(board,numlist,israndom)
             fistS=situation.board.copy()
-            print(xxx,yyy,x,y,x+xx,y+yy)
+            print(xxx,yyy,x,y,x+xx,y+yy,israndom)
             if z>0:
                 nextS=situation.board.copy()
                 dqn.saveEXP(fistS,num,-100,1,nextS)
+                israndom=True
             else:
                 if situation.Kill(xx,yy,Sans):
                     situation.ResetBa()
@@ -163,12 +170,14 @@ while running:
                     if situation.Win():
                         dqn.saveEXP(fistS,num,100*(0-situation.flag),1,nextS)
                     else:
-                        dqn.saveEXP(fistS,num,0,0,nextS)
+                        dqn.saveEXP(fistS,num,-1,0,nextS)
                     dqn.learn()
                     stage=1
+                    israndom=False
                 else:
                     nextS=situation.board.copy()
                     dqn.saveEXP(fistS,num,-100,1,nextS)
+                    israndom=True
 
 
 
