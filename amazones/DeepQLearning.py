@@ -13,6 +13,7 @@ class DeepQLearning(object):
         self.batch_size=32
         self.Epsilon=0.9
         self.Lambda=0.9
+        self.map,self.map_=self.makemap(10)
 
     def start(self):
         self.mainNN.Firstmodel()
@@ -30,7 +31,8 @@ class DeepQLearning(object):
         ran=(random.uniform(0,1)>self.Epsilon)
         if ran or israndom:
             rannum=random.sample(numlist,1)
-            max_index=rannum[0]
+            print(rannum[0][0],rannum[0][1],rannum[0][2],rannum[0][3])
+            max_index=self.map_[rannum[0][0],rannum[0][1],rannum[0][2],rannum[0][3]]
         else:
             index=self.mainNN.model.predict(situation)
             max_index=index.argmax()
@@ -39,42 +41,15 @@ class DeepQLearning(object):
 
     def getMove(self,index):
         num=int(index)
-        if num<288:
-            z=int(num/72)
-            numm=num-z*72
-            xx=int(numm/9)
-            yy=num%9
-            if(xx==0):
-                x=0
-                y=1+yy
-            elif(xx==1):
-                x=1+yy
-                y=1+yy
-            elif(xx==2):
-                x=1+yy
-                y=0
-            elif(xx==3):
-                x=1+yy
-                y=-1-yy
-            elif(xx==4):
-                x=0
-                y=-1-yy
-            elif(xx==5):
-                x=-1-yy
-                y=-1-yy
-            elif(xx==6):
-                x=-1-yy
-                y=0
-            elif(xx==7):
-                x=-1-yy
-                y=1+yy            
-            return z,x,y,num
-        elif num>=288:
+        if num<2940:
+            z=self.map[num]
+            return num,z[0],z[1],z[2],z[3]            
+        elif num>=2940:
             z=-1
-            numm=num-288
+            numm=num-2940
             x=int(numm/10)
             y=numm%10
-            return z,x,y,num
+            return num,x,y,x,y
             
 
     def saveEXP(self,fistS,action,reward,done,nextS):
@@ -95,7 +70,7 @@ class DeepQLearning(object):
         ans=[]
         errors=empty(self.batch_size)
         for i,j,done in actrew:
-            r=zeros(388)
+            r=zeros(3040)
             r[i]+=j+(1-done)*self.Lambda*qtarget[k]
             ans.append(r)
             errors[k]=abs(mainv[0][i]-r[i])
@@ -105,6 +80,45 @@ class DeepQLearning(object):
 
     def copy(self):
         self.targetNN.copy(self.mainNN.model.get_weights())
+
+    def makemap(self,n):
+        ans=[]
+        for i in range(n):
+            for j in range(n):
+                for k in range(1,n):
+                    if i<n and i>=0 and j+k<n and j+k>=0:
+                        ans.append([i,j,i,j+k])
+                for k in range(1,n):
+                    if i+k<n and i+k>=0 and j+k<n and j+k>=0:
+                        ans.append([i,j,i+k,j+k])
+                for k in range(1,n):
+                    if i+k<n and i+k>=0 and j<n and j>=0:
+                        ans.append([i,j,i+k,j])
+                for k in range(1,n):
+                    if i+k<n and i+k>=0 and j-k<n and j-k>=0:
+                        ans.append([i,j,i+k,j-k])
+                for k in range(1,n):
+                    if i<n and i>=0 and j-k<n and j-k>=0:
+                        ans.append([i,j,i,j-k])
+                for k in range(1,n):
+                    if i-k<n and i-k>=0 and j-k<n and j-k>=0:
+                        ans.append([i,j,i-k,j-k])
+                for k in range(1,n):
+                    if i-k<n and i-k>=0 and j<n and j>=0:
+                        ans.append([i,j,i-k,j])
+                for k in range(1,n):
+                    if i-k<n and i-k>=0 and j+k<n and j+k>=0:
+                        ans.append([i,j,i-k,j+k])
+        ans_=dict()
+        k=0
+        for i in ans:
+            ans_[i[0],i[1],i[2],i[3]]=k
+            k+=1
+        for i in range(n):
+            for j in range(n):
+                ans_[i,j,i,j]=k
+                k+=1
+        return ans,ans_
 
 
 

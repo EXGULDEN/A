@@ -149,27 +149,23 @@ class Situation(object):
                 chess=self.black
             for i in range(4):
                 nu=chess[i].GetMove()
-                ii=0
                 for j in nu:
                     f=True
                     for k in j:
                         if f:
                             if k.InBoard(self.n)==False:
                                 f=False
-                                ii+=1
                                 continue
                             if self.board[k.x,k.y]!=0:
                                 f=False
-                                ii+=1
                                 continue
                             if self.board[k.x,k.y]==0:
-                                ans.append(i*72+ii)
-                        ii+=1
+                                ans.append([chess[i].point.x,chess[i].point.y,k.x,k.y])
         else:
             for i in range(10):
                 for j in range(10):
                     if self.board[i][j]==4:
-                        ans.append(i*10+j+288)
+                        ans.append([i,j,i,j])
         return ans
 
     def SetBa(self,x,y):

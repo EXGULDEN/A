@@ -122,10 +122,9 @@ while running:
         if stage==1:
             board=situation.GetBoard()
             numlist=situation.GetNum(-1)
-            z,xx,yy,num=dqn.getNext(board,numlist,israndom)
-            print("z",z)
-            x,y=situation.GetXY(z)
-            print(x,y,x+xx,y+yy,israndom)
+            num,x,y,xx,yy=dqn.getNext(board,numlist,israndom)
+
+            print(x,y,xx,yy,israndom)
             Sans=situation.Select(x,y)
             israndom=True
             if Sans:
@@ -134,17 +133,17 @@ while running:
         if stage==2:
             t=False
             for i in Sans:
-                if i.GetBool(x+xx,y+yy):
+                if i.GetBool(xx,yy):
                     t=True
             if t:
                 fistS=situation.board.copy()
-                situation.Move(x,y,x+xx,y+yy)
-                Sans=situation.Select(x+xx,y+yy)
-                situation.SetBa(x+xx,y+yy)
+                situation.Move(x,y,xx,yy)
+                Sans=situation.Select(xx,yy)
+                situation.SetBa(xx,yy)
                 nextS=situation.board.copy()
                 dqn.saveEXP(fistS,num,-1,0,nextS)
-                xxx=x+xx
-                yyy=y+yy
+                xxx=xx
+                yyy=yy
                 stage=3
                 israndom=False
             else:
@@ -156,10 +155,10 @@ while running:
         if stage==3:
             board=situation.GetBoard()
             numlist=situation.GetNum(1)
-            z,xx,yy,num=dqn.getNext(board,numlist,israndom)
+            num,xx,yy,xx_,yy_=dqn.getNext(board,numlist,israndom)
             fistS=situation.board.copy()
-            print(xxx,yyy,x,y,x+xx,y+yy,israndom)
-            if z>0:
+            print(xxx,yyy,x,y,xx,yy,israndom)
+            if xx!=xx_ or yy!=yy_:
                 nextS=situation.board.copy()
                 dqn.saveEXP(fistS,num,-100,1,nextS)
                 israndom=True

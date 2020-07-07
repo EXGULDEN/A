@@ -12,9 +12,9 @@ class NeuralNetwork(object):
         
 
     def Firstmodel(self):
-        self.model.add(Dense(output_dim=32,input_dim=100))
-        self.model.add(Dense(output_dim=72))
-        self.model.add(Dense(output_dim=388))
+        self.model.add(Dense(output_dim=100,input_dim=100))
+        self.model.add(Dense(output_dim=10000))
+        self.model.add(Dense(output_dim=3040))
         self.model.compile(loss='mean_squared_error',optimizer='sgd')
 
     def Training(self,xtrain,ytrain,isweight):
