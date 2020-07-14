@@ -70,7 +70,13 @@ def new_situation(N):
     situation.SetChess(9,6)
     situation.SetChess(6,9)
     return situation
-
+def new_situation_(N):
+    situation=Situation(N)
+    situation.SetChess(4,0)
+    situation.SetChess(5,1)
+    situation.SetChess(5,4)
+    situation.SetChess(4,5)
+    return situation
     
 
 pygame.init()

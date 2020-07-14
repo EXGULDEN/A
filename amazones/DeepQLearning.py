@@ -16,8 +16,8 @@ class DeepQLearning(object):
         self.map,self.map_=self.makemap(10)
 
     def start(self):
-        self.mainNN.Firstmodel()
-        self.targetNN.Firstmodel()
+        self.mainNN.DuelingNetwork()
+        self.targetNN.DuelingNetwork()
 
     def load(self,name):
         self.targetNN.Loadmodel(name)
