@@ -1,6 +1,7 @@
 from keras.models import Sequential,load_model,Model
 from keras.layers import Dense, Activation, Convolution2D, MaxPooling2D, Flatten,Input, Add, Subtract, Lambda
 from keras import backend as K
+
 import numpy as np
 
 
@@ -19,8 +20,8 @@ class NeuralNetwork(object):
 
     def DuelingNetwork(self):
         inputs=Input(shape=(100,))
-        x=Dense(320,activation='relu')(inputs)
-        x=Dense(1000,activation='relu')(x)
+        x=Dense(320,activation='linear')(inputs)
+        x=Dense(1000,activation='linear')(x)
         
         value=Dense(1,activation='linear')(x)
         a=Dense(3040,activation='linear')(x)
@@ -31,10 +32,10 @@ class NeuralNetwork(object):
         self.model.compile(loss='mean_squared_error',optimizer='sgd')
         
 
-    def Training(self,xtrain,ytrain,isweight):
-        x_train=np.reshape(xtrain,(32,-1))
-        y_train=np.reshape(ytrain,(32,-1))
-        self.model.fit(x_train,y_train,batch_size=32,sample_weight=isweight)
+    def Training(self,xtrain,ytrain,isweight,bsize):
+        x_train=np.reshape(xtrain,(bsize,-1))
+        y_train=np.reshape(ytrain,(bsize,-1))
+        self.model.fit(x_train,y_train,batch_size=bsize,sample_weight=isweight)
 
     def copy(self,weights):
         self.model.set_weights(weights)

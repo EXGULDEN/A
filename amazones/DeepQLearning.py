@@ -10,7 +10,7 @@ class DeepQLearning(object):
         self.targetNN=NeuralNetwork()
         self.mainNN=NeuralNetwork()
         self.exp=ExperienceReplay(10000)
-        self.batch_size=32
+        self.batch_size=512
         self.Epsilon=0.9
         self.Lambda=0.9
         self.map,self.map_=self.makemap(10)
@@ -75,7 +75,7 @@ class DeepQLearning(object):
             ans.append(r)
             errors[k]=abs(mainv[0][i]-r[i])
             k+=1
-        self.mainNN.Training(fistS,ans,isweight)
+        self.mainNN.Training(fistS,ans,isweight,self.batch_size)
         self.exp.batch_updata(idxl,errors)
 
     def copy(self):

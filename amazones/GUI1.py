@@ -173,9 +173,11 @@ while running:
                     situation.ResetBa()
                     nextS=situation.board.copy()
                     if situation.Win():
-                        dqn.saveEXP(fistS,num,100*(0-situation.flag),1,nextS)
+                        r=situation.getReword()
+                        dqn.saveEXP(fistS,num,100*(0-situation.flag)+r,1,nextS)
                     else:
-                        dqn.saveEXP(fistS,num,-1,0,nextS)
+                        r=situation.getReword()
+                        dqn.saveEXP(fistS,num,r,0,nextS)
                     dqn.learn()
                     stage=1
                     israndom=False
@@ -204,8 +206,8 @@ while running:
             if event.key==K_k:
                 print("dqn")
                 stage1=1
-                dqn.load('fistmodel.h5')
-                print(stage1)
+                dqn.load('dumodel2.h5')
+
                 
         if event.type == MOUSEBUTTONDOWN:
             y,x=pygame.mouse.get_pos()

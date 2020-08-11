@@ -140,12 +140,14 @@ class Situation(object):
                 if string==i.GetStr():
                     self.child=i.child
 
-    def GetNum(self,flag):
+    def GetNum(self,flag,sflag=0):
         ans=[]
+        if sflag==0:
+            sflag=self.flag
         if flag<0:
-            if self.flag==1:
+            if sflag==1:
                 chess=self.white
-            elif self.flag==-1:
+            elif sflag==-1:
                 chess=self.black
             for i in range(4):
                 nu=chess[i].GetMove()
@@ -178,6 +180,16 @@ class Situation(object):
             for j in range(self.n):
                 if self.board[i][j]==4:
                     self.board[i][j]=0
+
+    def getReword(self):
+        wr=len(self.GetNum(-1,1))
+        br=len(self.GetNum(-1,-1))
+        ans=0
+        if self.flag==1:
+            ans=(wr-br)*10
+        if self.flag==-1:
+            ans=(br-wr)*10
+        return ans
                     
             
             
