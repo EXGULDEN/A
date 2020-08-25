@@ -6,10 +6,10 @@ import random
 
 class DeepQLearning(object):
     
-    def __init__(self):
+    def __init__(self,expsize=10000):
         self.targetNN=NeuralNetwork()
         self.mainNN=NeuralNetwork()
-        self.exp=ExperienceReplay(10000)
+        self.exp=ExperienceReplay(expsize)
         self.batch_size=512
         self.Epsilon=0.9
         self.Lambda=0.9
@@ -80,6 +80,12 @@ class DeepQLearning(object):
 
     def copy(self):
         self.targetNN.copy(self.mainNN.model.get_weights())
+
+    def getmWeight(self):
+        return self.mainNN.model.get_weights()
+
+    def copym(self,mn):
+        self.mainNN.copy(mn)
 
     def makemap(self,n):
         ans=[]
